@@ -34,19 +34,64 @@
             backdrop-filter: blur(10px);
         }
 
-        .photo-gallery {
-            display: flex;
-            gap: 15px;
+        .hero-photo {
             margin: 20px 0;
-            overflow-x: auto;
-            padding: 10px 0;
+            text-align: center;
         }
 
-        .photo-placeholder {
-            min-width: 200px;
-            height: 150px;
+        .hero-placeholder, .hero-image {
+            width: 100%;
+            max-width: 600px;
+            height: 300px;
+            margin: 0 auto;
+            border-radius: 20px;
+            display: block;
+        }
+
+        .hero-placeholder {
             background: linear-gradient(45deg, #ddd, #eee);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            border: 3px dashed #aaa;
+            font-size: 16px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex-direction: column;
+        }
+
+        .hero-placeholder:hover {
+            background: linear-gradient(45deg, #ccc, #ddd);
+            transform: scale(1.02);
+        }
+
+        .hero-image {
+            object-fit: cover;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .hero-image:hover {
+            transform: scale(1.02);
+        }
+
+        .second-photo {
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .second-placeholder, .second-image {
+            width: 300px;
+            height: 200px;
+            margin: 0 auto;
             border-radius: 15px;
+            display: block;
+        }
+
+        .second-placeholder {
+            background: linear-gradient(45deg, #ddd, #eee);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -56,10 +101,21 @@
             text-align: center;
             cursor: pointer;
             transition: all 0.3s ease;
+            flex-direction: column;
         }
 
-        .photo-placeholder:hover {
+        .second-placeholder:hover {
             background: linear-gradient(45deg, #ccc, #ddd);
+            transform: scale(1.05);
+        }
+
+        .second-image {
+            object-fit: cover;
+            box-shadow: 0 6px 24px rgba(0, 0, 0, 0.15);
+            transition: transform 0.3s ease;
+        }
+
+        .second-image:hover {
             transform: scale(1.05);
         }
 
@@ -381,13 +437,15 @@
                 font-size: 3em;
             }
             
-            .photo-gallery {
-                flex-direction: column;
-                align-items: center;
+            .hero-placeholder, .hero-image {
+                max-width: 100%;
+                height: 250px;
             }
             
-            .photo-placeholder {
-                min-width: 90%;
+            .second-placeholder, .second-image {
+                width: 90%;
+                max-width: 300px;
+                height: 180px;
             }
 
             .marine-grid {
@@ -402,22 +460,21 @@
             <h1 class="location-title">⚓ Pop Pop's Boat House</h1>
             <p class="subtitle">Ocean Pines Weather Station</p>
             
-            <div class="photo-gallery">
-                <div class="photo-placeholder" onclick="alert('Click here to add your favorite photos of Pop Pop and family!')">
-                    📸 Add Photo 1<br>
-                    <small>Family memories</small>
+            <!-- Hero Photo Section -->
+            <div class="hero-photo">
+                <div class="hero-placeholder" onclick="alert('Replace this with your favorite photo of Pop Pop!\n\nTo add: Click the pencil icon to edit index.html, then replace this div with:\n<img src=\'your-hero-photo.jpg\' alt=\'Pop Pop\' class=\'hero-image\'>')">
+                    📸 Hero Photo<br>
+                    <small>Pop Pop's favorite photo</small><br>
+                    <small style="font-size: 0.7em; opacity: 0.7;">Click for instructions</small>
                 </div>
-                <div class="photo-placeholder" onclick="alert('Click here to add your favorite photos of Pop Pop and family!')">
-                    📸 Add Photo 2<br>
-                    <small>Ocean Pines moments</small>
-                </div>
-                <div class="photo-placeholder" onclick="alert('Click here to add your favorite photos of Pop Pop and family!')">
-                    📸 Add Photo 3<br>
-                    <small>Coastal adventures</small>
-                </div>
-                <div class="photo-placeholder" onclick="alert('Click here to add your favorite photos of Pop Pop and family!')">
-                    📸 Add Photo 4<br>
-                    <small>More memories</small>
+            </div>
+            
+            <!-- Second Photo Section -->
+            <div class="second-photo">
+                <div class="second-placeholder" onclick="alert('Add your second favorite photo here!\n\nTo add: Click the pencil icon to edit index.html, then replace this div with:\n<img src=\'your-second-photo.jpg\' alt=\'Family memories\' class=\'second-image\'>')">
+                    📸 Second Photo<br>
+                    <small>Family memories</small><br>
+                    <small style="font-size: 0.7em; opacity: 0.7;">Click for instructions</small>
                 </div>
             </div>
             
@@ -801,3 +858,4 @@
                         </div>
                         ${maxWaveHeight ? `
                         <div style="margin-top: 5px; font-size: 0.8em; color: #00cec9;">
+                        
