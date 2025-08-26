@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -250,40 +249,6 @@
             gap: 0.5rem;
         }
 
-        .marine-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-        }
-
-        .marine-stat {
-            background: rgba(0, 206, 201, 0.15);
-            border: 1px solid rgba(0, 206, 201, 0.3);
-            padding: 1.5rem;
-            border-radius: 12px;
-            text-align: center;
-            transition: all 0.3s ease;
-        }
-
-        .marine-stat:hover {
-            background: rgba(0, 206, 201, 0.25);
-            transform: scale(1.02);
-        }
-
-        .marine-value {
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: #00cec9;
-            margin: 0.5rem 0;
-        }
-
-        .marine-label {
-            font-size: 0.875rem;
-            color: rgba(255, 255, 255, 0.8);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
         .tide-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -457,13 +422,6 @@
             border: 2px solid rgba(255, 255, 255, 0.3);
             transition: all 0.3s ease;
             z-index: 999;
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 0.7rem;
-            text-align: center;
         }
 
         .secondary-photo:hover {
@@ -475,11 +433,6 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-        }
-
-        .secondary-photo .placeholder-text {
-            padding: 0.5rem;
-            line-height: 1.2;
         }
 
         @keyframes fadeInUp {
@@ -561,35 +514,26 @@
                     </div>
                 </div>
 
-                <!-- Marine Conditions -->
-                <div class="glass-card">
-                    <h2 class="card-title">🌊 Marine Conditions</h2>
-                    <div class="marine-grid" id="marineGrid">
-                        <div class="loading">
-                            <div class="spinner"></div>
-                            Loading marine data...
+                <div class="cards-grid">
+                    <!-- Tides -->
+                    <div class="glass-card">
+                        <h2 class="card-title">🌊 Today's Tides (Ocean City)</h2>
+                        <div class="tide-grid" id="tideGrid">
+                            <div class="loading">
+                                <div class="spinner"></div>
+                                Loading tide data...
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- Tides -->
-                <div class="glass-card">
-                    <h2 class="card-title">🌊 Today's Tides (Ocean City)</h2>
-                    <div class="tide-grid" id="tideGrid">
-                        <div class="loading">
-                            <div class="spinner"></div>
-                            Loading tide data...
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 7-Day Forecast -->
-                <div class="glass-card">
-                    <h2 class="card-title">📅 7-Day Forecast</h2>
-                    <div class="forecast-grid" id="forecastGrid">
-                        <div class="loading">
-                            <div class="spinner"></div>
-                            Loading forecast...
+                    <!-- 7-Day Forecast -->
+                    <div class="glass-card">
+                        <h2 class="card-title">📅 7-Day Forecast</h2>
+                        <div class="forecast-grid" id="forecastGrid">
+                            <div class="loading">
+                                <div class="spinner"></div>
+                                Loading forecast...
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -615,9 +559,8 @@
     </div>
 
     <!-- Secondary Photo -->
-    <div class="secondary-photo" id="secondaryPhoto">
-        <img src="Mom-Dad-Boat.jpg" alt="Livin' The Dream" 
-             onerror="this.style.display='none'; document.getElementById('secondaryPhoto').innerHTML='<div class=&quot;placeholder-text&quot;>📸<br>Livin&#39; The Dream<br><small>Photo missing</small></div>';">
+    <div class="secondary-photo">
+        <img src="Mom-Dad-Boat.jpg" alt="Livin' The Dream">
     </div>
 
     <!-- Refresh Button -->
@@ -633,9 +576,8 @@
         // Ocean City NOAA tide station
         const TIDE_STATION = '8570283';
 
-        // Weather and marine data storage
+        // Weather and tide data storage
         let weatherData = {};
-        let marineData = {};
         let tideData = {};
 
         // Initialize the weather station
@@ -643,7 +585,6 @@
             console.log('Initializing Ocean Pines Coastal Weather Station...');
             await Promise.all([
                 loadWeatherData(),
-                loadMarineData(),
                 loadTideData()
             ]);
             
@@ -672,87 +613,6 @@
                 console.error('Error loading weather data:', error);
                 showError('currentWeather', 'Unable to load weather data. Please check your internet connection and try again.');
             }
-        }
-
-        // Load marine data from Open-Meteo Marine API
-        async function loadMarineData() {
-            try {
-                const marineResponse = await fetch(`https://marine-api.open-meteo.com/v1/marine?latitude=${LATITUDE}&longitude=${LONGITUDE}&current=wave_height,wave_direction,wave_period,wind_wave_height,wind_wave_direction,wind_wave_period,swell_wave_height,swell_wave_direction,swell_wave_period&hourly=wave_height,swell_wave_height&daily=wave_height_max,swell_wave_height_max&timezone=America/New_York`);
-                
-                if (!marineResponse.ok) {
-                    throw new Error(`Marine API responded with status: ${marineResponse.status}`);
-                }
-                
-                marineData = await marineResponse.json();
-                console.log('Marine data loaded successfully');
-                
-                renderMarineConditions();
-                
-            } catch (error) {
-                console.error('Error loading marine data:', error);
-                // Show sample marine data as fallback
-                showSampleMarineData();
-            }
-        }
-
-        // Show sample marine data if API fails
-        function showSampleMarineData() {
-            const marineGrid = document.getElementById('marineGrid');
-            
-            // Generate realistic sample marine data for Ocean Pines area
-            const sampleMarine = {
-                wave_height: 1.2,
-                swell_wave_height: 0.8,
-                wind_wave_height: 0.6,
-                ocean_current_velocity: 0.3,
-                wave_direction: 180,
-                ocean_current_direction: 90
-            };
-            
-            marineGrid.innerHTML = `
-                <div class="marine-stat">
-                    <div class="marine-label">🌊 Wave Height</div>
-                    <div class="marine-value">${sampleMarine.wave_height.toFixed(1)} ft</div>
-                    <div style="font-size: 0.75rem; color: rgba(255,255,255,0.6);">
-                        ${getWindDirection(sampleMarine.wave_direction)}
-                    </div>
-                </div>
-                <div class="marine-stat">
-                    <div class="marine-label">🏄‍♂️ Swell</div>
-                    <div class="marine-value">${sampleMarine.swell_wave_height.toFixed(1)} ft</div>
-                    <div style="font-size: 0.75rem; color: rgba(255,255,255,0.6);">
-                        8s period
-                    </div>
-                </div>
-                <div class="marine-stat">
-                    <div class="marine-label">💨 Wind Waves</div>
-                    <div class="marine-value">${sampleMarine.wind_wave_height.toFixed(1)} ft</div>
-                    <div style="font-size: 0.75rem; color: rgba(255,255,255,0.6);">
-                        6s period
-                    </div>
-                </div>
-                <div class="marine-stat">
-                    <div class="marine-label">🌊 Current</div>
-                    <div class="marine-value">${sampleMarine.ocean_current_velocity.toFixed(1)} kt</div>
-                    <div style="font-size: 0.75rem; color: rgba(255,255,255,0.6);">
-                        ${getWindDirection(sampleMarine.ocean_current_direction)}
-                    </div>
-                </div>
-                <div class="marine-stat">
-                    <div class="marine-label">📊 Sea State</div>
-                    <div class="marine-value" style="font-size: 1.2rem;">${getSeaState(sampleMarine.wave_height)}</div>
-                    <div style="font-size: 0.75rem; color: rgba(255,255,255,0.6);">
-                        ${getSeaStateDescription(sampleMarine.wave_height)}
-                    </div>
-                </div>
-                <div class="marine-stat">
-                    <div class="marine-label">🎯 Conditions</div>
-                    <div class="marine-value" style="font-size: 1.1rem;">${getBestMarineActivity(sampleMarine.wave_height, 12)}</div>
-                    <div style="font-size: 0.75rem; color: rgba(255,255,255,0.6);">
-                        Sample data
-                    </div>
-                </div>
-            `;
         }
 
         // Load tide data using a CORS proxy for NOAA API
@@ -797,7 +657,7 @@
                 { time: new Date(now.getFullYear(), now.getMonth(), now.getDate(), 6, 15), type: 'Low', height: 0.8 },
                 { time: new Date(now.getFullYear(), now.getMonth(), now.getDate(), 12, 30), type: 'High', height: 3.2 },
                 { time: new Date(now.getFullYear(), now.getMonth(), now.getDate(), 18, 45), type: 'Low', height: 0.5 },
-                { time: new Date(now.getFullYear(), now.getMonth(), now.getDate(), 24, 0), type: 'High', height: 3.1 }
+                { time: new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 1, 0), type: 'High', height: 3.1 }
             ].filter(tide => tide.time > now); // Only show future tides
             
             const tidesHTML = sampleTides.map(tide => {
@@ -868,67 +728,6 @@
             `;
         }
 
-        // Render marine conditions
-        function renderMarineConditions() {
-            const current = marineData.current;
-            const marineGrid = document.getElementById('marineGrid');
-            
-            if (!current) {
-                showError('marineGrid', 'Marine data not available');
-                return;
-            }
-            
-            const waveHeight = current.wave_height ? current.wave_height : 0;
-            const swellHeight = current.swell_wave_height ? current.swell_wave_height : 0;
-            const windWaveHeight = current.wind_wave_height ? current.wind_wave_height : 0;
-            const currentSpeed = current.ocean_current_velocity ? current.ocean_current_velocity : 0;
-            
-            marineGrid.innerHTML = `
-                <div class="marine-stat">
-                    <div class="marine-label">🌊 Wave Height</div>
-                    <div class="marine-value">${waveHeight.toFixed(1)} ft</div>
-                    <div style="font-size: 0.75rem; color: rgba(255,255,255,0.6);">
-                        ${getWindDirection(current.wave_direction || 0)}
-                    </div>
-                </div>
-                <div class="marine-stat">
-                    <div class="marine-label">🏄‍♂️ Swell</div>
-                    <div class="marine-value">${swellHeight.toFixed(1)} ft</div>
-                    <div style="font-size: 0.75rem; color: rgba(255,255,255,0.6);">
-                        ${current.swell_wave_period ? `${current.swell_wave_period.toFixed(0)}s` : 'N/A'}
-                    </div>
-                </div>
-                <div class="marine-stat">
-                    <div class="marine-label">💨 Wind Waves</div>
-                    <div class="marine-value">${windWaveHeight.toFixed(1)} ft</div>
-                    <div style="font-size: 0.75rem; color: rgba(255,255,255,0.6);">
-                        ${current.wind_wave_period ? `${current.wind_wave_period.toFixed(0)}s` : 'N/A'}
-                    </div>
-                </div>
-                <div class="marine-stat">
-                    <div class="marine-label">🌊 Current</div>
-                    <div class="marine-value">${currentSpeed.toFixed(1)} kt</div>
-                    <div style="font-size: 0.75rem; color: rgba(255,255,255,0.6);">
-                        ${getWindDirection(current.ocean_current_direction || 0)}
-                    </div>
-                </div>
-                <div class="marine-stat">
-                    <div class="marine-label">📊 Sea State</div>
-                    <div class="marine-value" style="font-size: 1.2rem;">${getSeaState(waveHeight)}</div>
-                    <div style="font-size: 0.75rem; color: rgba(255,255,255,0.6);">
-                        ${getSeaStateDescription(waveHeight)}
-                    </div>
-                </div>
-                <div class="marine-stat">
-                    <div class="marine-label">🎯 Conditions</div>
-                    <div class="marine-value" style="font-size: 1.1rem;">${getBestMarineActivity(waveHeight, current.wind_speed_10m)}</div>
-                    <div style="font-size: 0.75rem; color: rgba(255,255,255,0.6);">
-                        Right now
-                    </div>
-                </div>
-            `;
-        }
-
         // Render tide data
         function renderTideData() {
             const tideGrid = document.getElementById('tideGrid');
@@ -977,7 +776,6 @@
         // Render 7-day forecast
         function renderForecast() {
             const daily = weatherData.daily;
-            const marinDaily = marineData.daily;
             const forecastGrid = document.getElementById('forecastGrid');
             
             if (!daily) {
@@ -991,7 +789,6 @@
                 const maxTemp = Math.round(daily.temperature_2m_max[index]);
                 const minTemp = Math.round(daily.temperature_2m_min[index]);
                 const description = getWeatherDescription(daily.weather_code[index]);
-                const maxWaveHeight = marinDaily?.wave_height_max?.[index];
                 
                 return `
                     <div class="forecast-day">
@@ -1002,10 +799,6 @@
                         <div style="margin-top: 0.5rem; font-size: 0.75rem; color: rgba(116, 185, 255, 0.8);">
                             💧 ${daily.precipitation_sum[index]}" rain
                         </div>
-                        ${maxWaveHeight ? `
-                        <div style="margin-top: 0.25rem; font-size: 0.75rem; color: rgba(0, 206, 201, 0.8);">
-                            🌊 ${maxWaveHeight.toFixed(1)} ft waves
-                        </div>` : ''}
                     </div>
                 `;
             }).join('');
@@ -1101,38 +894,6 @@
             return directions[Math.round(degrees / 22.5) % 16];
         }
 
-        function getSeaState(waveHeight) {
-            if (waveHeight < 0.1) return 'Calm';
-            if (waveHeight < 0.5) return 'Smooth';
-            if (waveHeight < 1.25) return 'Slight';
-            if (waveHeight < 2.5) return 'Moderate';
-            if (waveHeight < 4) return 'Rough';
-            if (waveHeight < 6) return 'Very Rough';
-            if (waveHeight < 9) return 'High';
-            if (waveHeight < 14) return 'Very High';
-            return 'Phenomenal';
-        }
-
-        function getSeaStateDescription(waveHeight) {
-            if (waveHeight < 0.1) return 'Mirror seas';
-            if (waveHeight < 0.5) return 'Ripples only';
-            if (waveHeight < 1.25) return 'Small wavelets';
-            if (waveHeight < 2.5) return 'Large wavelets';
-            if (waveHeight < 4) return 'Small waves';
-            if (waveHeight < 6) return 'Moderate waves';
-            if (waveHeight < 9) return 'Large waves';
-            if (waveHeight < 14) return 'Very large waves';
-            return 'Exceptional waves';
-        }
-
-        function getBestMarineActivity(waveHeight, windSpeed = 0) {
-            if (waveHeight < 1 && windSpeed < 10) return '🏊‍♀️ Perfect Swimming';
-            if (waveHeight < 2 && windSpeed < 15) return '🚤 Great Boating';
-            if (waveHeight < 3 && windSpeed < 20) return '🎣 Good Fishing';
-            if (waveHeight < 4) return '⚓ Harbor Time';
-            return '🏠 Stay Ashore';
-        }
-
         function updateLastUpdated(message) {
             const lastUpdatedElement = document.getElementById('lastUpdated');
             if (message) {
@@ -1155,7 +916,6 @@
             console.log('Refreshing weather data...');
             await Promise.all([
                 loadWeatherData(),
-                loadMarineData(), 
                 loadTideData()
             ]);
             updateLastUpdated();
@@ -1183,3 +943,4 @@
     </script>
 </body>
 </html>
+             
