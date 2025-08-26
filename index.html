@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -462,12 +463,20 @@
             
             <!-- Hero Photo Section -->
             <div class="hero-photo">
-                <img src="sunset.jpg" alt="Pop Pop's sunset photo" class="hero-image">
+                <div class="hero-placeholder" onclick="alert('Replace this with your favorite photo of Pop Pop!\n\nTo add: Click the pencil icon to edit index.html, then replace this div with:\n<img src=\'your-hero-photo.jpg\' alt=\'Pop Pop\' class=\'hero-image\'>')">
+                    📸 Hero Photo<br>
+                    <small>Pop Pop's favorite photo</small><br>
+                    <small style="font-size: 0.7em; opacity: 0.7;">Click for instructions</small>
+                </div>
             </div>
             
             <!-- Second Photo Section -->
             <div class="second-photo">
-                <img src="mom-dad-boat.jpg" alt="Family memories" class="second-image">
+                <div class="second-placeholder" onclick="alert('Add your second favorite photo here!\n\nTo add: Click the pencil icon to edit index.html, then replace this div with:\n<img src=\'your-second-photo.jpg\' alt=\'Family memories\' class=\'second-image\'>')">
+                    📸 Second Photo<br>
+                    <small>Family memories</small><br>
+                    <small style="font-size: 0.7em; opacity: 0.7;">Click for instructions</small>
+                </div>
             </div>
             
             <div class="last-updated" id="lastUpdated">Loading coastal weather data...</div>
@@ -850,4 +859,3 @@
                         </div>
                         ${maxWaveHeight ? `
                         <div style="margin-top: 5px; font-size: 0.8em; color: #00cec9;">
-                        
