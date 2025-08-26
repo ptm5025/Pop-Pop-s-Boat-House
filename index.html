@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ocean Pines Coastal Weather - For Pop Pop</title>
+    <title>Pop Pop's Boat House</title>
     <style>
         * {
             margin: 0;
@@ -239,14 +239,6 @@
             color: #2d3436;
         }
 
-        .marine-detail-item {
-            text-align: center;
-            padding: 15px;
-            background: rgba(0, 206, 201, 0.1);
-            border-radius: 15px;
-            border: 2px solid rgba(0, 206, 201, 0.3);
-        }
-
         .tides-container {
             background: rgba(0, 206, 201, 0.1);
             padding: 20px;
@@ -463,7 +455,7 @@
             
             <!-- Hero Photo Section -->
             <div class="hero-photo">
-                <div class="hero-placeholder" onclick="alert('Replace this with your favorite photo of Pop Pop!\n\nTo add: Click the pencil icon to edit index.html, then replace this div with:\n<img src=\'your-hero-photo.jpg\' alt=\'Pop Pop\' class=\'hero-image\'>')">
+                <div class="hero-placeholder" onclick="alert('Replace this with your favorite photo of Pop Pop!\n\nTo add: Click the pencil icon to edit index.html, then replace this div with:\n<img src=\'sunset.jpg\' alt=\'Pop Pop\' class=\'hero-image\'>')">
                     📸 Hero Photo<br>
                     <small>Pop Pop's favorite photo</small><br>
                     <small style="font-size: 0.7em; opacity: 0.7;">Click for instructions</small>
@@ -472,7 +464,7 @@
             
             <!-- Second Photo Section -->
             <div class="second-photo">
-                <div class="second-placeholder" onclick="alert('Add your second favorite photo here!\n\nTo add: Click the pencil icon to edit index.html, then replace this div with:\n<img src=\'your-second-photo.jpg\' alt=\'Family memories\' class=\'second-image\'>')">
+                <div class="second-placeholder" onclick="alert('Add your second favorite photo here!\n\nTo add: Click the pencil icon to edit index.html, then replace this div with:\n<img src=\'Mom-Dad-Boat.jpg\' alt=\'Family memories\' class=\'second-image\'>')">
                     📸 Second Photo<br>
                     <small>Family memories</small><br>
                     <small style="font-size: 0.7em; opacity: 0.7;">Click for instructions</small>
@@ -859,3 +851,177 @@
                         </div>
                         ${maxWaveHeight ? `
                         <div style="margin-top: 5px; font-size: 0.8em; color: #00cec9;">
+                            🌊 Waves up to ${maxWaveHeight.toFixed(1)} ft
+                        </div>` : ''}
+                        ${maxSwellHeight ? `
+                        <div style="margin-top: 2px; font-size: 0.8em; color: #00cec9;">
+                            🏄‍♂️ Swell ${maxSwellHeight.toFixed(1)} ft
+                        </div>` : ''}
+                    </div>
+                `;
+            }).join('');
+            
+            forecastGrid.innerHTML = forecastHTML;
+        }
+
+        // Helper functions
+        function formatDateForNOAA(date) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}${month}${day}`;
+        }
+
+        function getDayName(dateString) {
+            const date = new Date(dateString);
+            const today = new Date();
+            const tomorrow = new Date(today);
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            
+            if (date.toDateString() === today.toDateString()) {
+                return 'Today';
+            } else if (date.toDateString() === tomorrow.toDateString()) {
+                return 'Tomorrow';
+            } else {
+                return date.toLocaleDateString('en-US', { weekday: 'long' });
+            }
+        }
+
+        function getWeatherDescription(code) {
+            const descriptions = {
+                0: 'Clear sky',
+                1: 'Mainly clear',
+                2: 'Partly cloudy',
+                3: 'Overcast',
+                45: 'Foggy',
+                48: 'Depositing rime fog',
+                51: 'Light drizzle',
+                53: 'Moderate drizzle',
+                55: 'Dense drizzle',
+                61: 'Slight rain',
+                63: 'Moderate rain',
+                65: 'Heavy rain',
+                71: 'Slight snow',
+                73: 'Moderate snow',
+                75: 'Heavy snow',
+                77: 'Snow grains',
+                80: 'Slight rain showers',
+                81: 'Moderate rain showers',
+                82: 'Violent rain showers',
+                85: 'Slight snow showers',
+                86: 'Heavy snow showers',
+                95: 'Thunderstorm',
+                96: 'Thunderstorm with slight hail',
+                99: 'Thunderstorm with heavy hail'
+            };
+            return descriptions[code] || 'Unknown';
+        }
+
+        function getWeatherIcon(code) {
+            const icons = {
+                0: '☀️',
+                1: '🌤️',
+                2: '⛅',
+                3: '☁️',
+                45: '🌫️',
+                48: '🌫️',
+                51: '🌦️',
+                53: '🌦️',
+                55: '🌦️',
+                61: '🌧️',
+                63: '🌧️',
+                65: '🌧️',
+                71: '🌨️',
+                73: '🌨️',
+                75: '❄️',
+                77: '🌨️',
+                80: '🌦️',
+                81: '🌦️',
+                82: '⛈️',
+                85: '🌨️',
+                86: '❄️',
+                95: '⛈️',
+                96: '⛈️',
+                99: '⛈️'
+            };
+            return icons[code] || '🌤️';
+        }
+
+        function getWindDirection(degrees) {
+            const directions = ['N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE', 'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW', 'NNW'];
+            return directions[Math.round(degrees / 22.5) % 16];
+        }
+
+        function getSeaState(waveHeight) {
+            if (waveHeight < 0.1) return 'Calm';
+            if (waveHeight < 0.5) return 'Smooth';
+            if (waveHeight < 1.25) return 'Slight';
+            if (waveHeight < 2.5) return 'Moderate';
+            if (waveHeight < 4) return 'Rough';
+            if (waveHeight < 6) return 'Very Rough';
+            if (waveHeight < 9) return 'High';
+            if (waveHeight < 14) return 'Very High';
+            return 'Phenomenal';
+        }
+
+        function getSeaStateDescription(waveHeight) {
+            if (waveHeight < 0.1) return 'Mirror-like seas';
+            if (waveHeight < 0.5) return 'Ripples, no foam';
+            if (waveHeight < 1.25) return 'Small wavelets';
+            if (waveHeight < 2.5) return 'Large wavelets';
+            if (waveHeight < 4) return 'Small waves';
+            if (waveHeight < 6) return 'Moderate waves';
+            if (waveHeight < 9) return 'Large waves';
+            if (waveHeight < 14) return 'Very large waves';
+            return 'Exceptionally high waves';
+        }
+
+        function getBestMarineActivity(waveHeight, windSpeed = 0) {
+            if (waveHeight < 1 && windSpeed < 10) return '🏊‍♀️ Swimming';
+            if (waveHeight < 2 && windSpeed < 15) return '🚤 Boating';
+            if (waveHeight < 3 && windSpeed < 20) return '🎣 Fishing';
+            if (waveHeight < 4) return '⚓ Harbor time';
+            return '🏠 Stay ashore';
+        }
+
+        function updateLastUpdated(message) {
+            const lastUpdatedElement = document.getElementById('lastUpdated');
+            if (message) {
+                lastUpdatedElement.textContent = message;
+            } else {
+                const now = new Date();
+                lastUpdatedElement.textContent = `Last updated: ${now.toLocaleTimeString()} on ${now.toLocaleDateString()}`;
+            }
+        }
+
+        function showError(elementId, message) {
+            const element = document.getElementById(elementId);
+            if (element) {
+                element.innerHTML = `<div class="error">⚠️ ${message}</div>`;
+            }
+        }
+
+        // Refresh weather data
+        async function refreshWeather() {
+            console.log('Refreshing weather data...');
+            await Promise.all([
+                loadWeatherData(),
+                loadMarineData(), 
+                loadTideData()
+            ]);
+            updateLastUpdated();
+        }
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', initWeatherStation);
+
+        // Page visibility API to refresh when user returns to tab
+        document.addEventListener('visibilitychange', function() {
+            if (!document.hidden) {
+                console.log('Page became visible, refreshing weather...');
+                refreshWeather();
+            }
+        });
+    </script>
+</body>
+</html>
